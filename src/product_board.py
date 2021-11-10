@@ -77,13 +77,16 @@ def get_product_board_stats(return_type: ReturnType = ReturnType.JSON, include_n
 
 
 def aggregate_board_stats(df: pd.DataFrame):
-    # translate storypoints to numeric
+    # translate T-Shirt sizes to Fibonacci
     df['storypoints_numeric'] = [STORYPOINTS_NUMERIC.get(s) for s in df.storypoints]
+    # compute total storypoints per row
+    df['storypoints_numeric_sum'] = df['storypoints_numeric'] * df['count']
     # aggregate by whether list belongs to done (list is implicitly assumed as ongoing otherwise)
-    aggregate = df.groupby(df.list.isin(DONE_LISTS)).storypoints_numeric.sum().reset_index()
+    aggregate = df.groupby(df.list.isin(DONE_LISTS)).storypoints_numeric_sum.sum().reset_index()
     # renamings for readability
-    aggregate.rename(columns={'list': 'status', 'storypoints_numeric': 'sum'}, inplace=True)
+    aggregate.rename(columns={'list': 'status', 'storypoints_numeric_sum': 'sum'}, inplace=True)
     aggregate.replace({'status': {True: 'done', False: 'in progress'}}, inplace=True)
+    # convert to int for readability
     aggregate['sum'] = aggregate['sum'].astype(int)
     return aggregate
 
