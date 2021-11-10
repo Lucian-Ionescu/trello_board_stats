@@ -1,6 +1,9 @@
+import os
+
+print(os.getcwd())
+
 from dotenv import load_dotenv
 from flask import Flask, request, Response
-
 from product_board import get_aggregated_board_stats, ReturnType, get_product_board_stats
 
 app = Flask(__name__)
