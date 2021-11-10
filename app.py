@@ -5,7 +5,7 @@ from flask import Flask, request, Response
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     return "<h1>Welcome to Trello Stats</h1>"
 
