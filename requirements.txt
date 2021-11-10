@@ -2,4 +2,4 @@ python-dotenv
 requests
 pandas
 flask
-uvicorn
+gunicorn
