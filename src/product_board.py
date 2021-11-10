@@ -70,6 +70,9 @@ def get_product_board_stats(return_type: ReturnType = ReturnType.JSON, include_n
     else:
         if return_type == ReturnType.JSON:
             return return_df_as_json(result)
+        else:
+            if return_type == ReturnType.HTML:
+                return return_df_as_html(result)
     return result
 
 

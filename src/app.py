@@ -19,7 +19,16 @@ def check():
 def advanced():
     include_nas = request.args.get('include_nas')
     stats = get_product_board_stats(
-        return_type=ReturnType.JSON,
+        return_type=ReturnType.HTML,
+        include_nas=include_nas == 'true')
+    return stats
+
+
+@app.route('/product/detailed/csv', methods=['GET'])
+def advanced():
+    include_nas = request.args.get('include_nas')
+    stats = get_product_board_stats(
+        return_type=ReturnType.CSV,
         include_nas=include_nas == 'true')
     return stats
 
