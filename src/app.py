@@ -4,9 +4,6 @@ from product_board import get_aggregated_board_stats, ReturnType, get_product_bo
 
 app = Flask(__name__)
 
-# define for IIS module registration
-wsgi_app = app.wsgi_app
-
 
 @app.route('/')
 def index():
