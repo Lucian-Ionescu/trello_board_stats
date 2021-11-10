@@ -6,6 +6,11 @@ from product_board import get_aggregated_board_stats, ReturnType, get_product_bo
 app = Flask(__name__)
 
 
+@app.route('/')
+def index():
+    return "<h1>Welcome to Trello Stats</h1>"
+
+
 @app.route('/check', methods=['GET'])
 def check():
     return {'test': 'ok'}
