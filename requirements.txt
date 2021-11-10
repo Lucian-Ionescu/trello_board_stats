@@ -2,3 +2,4 @@ python-dotenv
 requests
 pandas
 flask
+uvicorn==0.15.0
