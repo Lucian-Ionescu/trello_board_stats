@@ -1,8 +1,32 @@
+from enum import Enum
+from typing import List
+
+import pandas as pd
+
+from config.board_config import STORYPOINTS_ORDERED, STORYPOINTS_NUMERIC, DONE_LISTS, \
+    RELEVANT_TRELLO_LISTS
 from config.trello_api import get_board, get_list_ids, get_storypoints_custom_field_id, get_cards
 
+ReturnType = Enum('ReturnType', 'JSON CSV DATAFRAME HTML')
 
-def get_product_board_stats():
 
+def sort_by_list_and_storypoints(df: pd.DataFrame,
+                                 relevant_lists: List[str] = RELEVANT_TRELLO_LISTS,
+                                 storypoints_order: List[str] = STORYPOINTS_ORDERED):
+    # create temporary categorical attributes for sorting
+    df['lists_cat'] = pd.Categorical(df['list'],
+                                     categories=relevant_lists,
+                                     ordered=True)
+    df['storypoints_cat'] = pd.Categorical(df['storypoints'],
+                                           categories=storypoints_order,
+                                           ordered=True)
+    # sort by lists and storypoints
+    df.sort_values(['lists_cat', 'storypoints_cat'], inplace=True)
+    # return sorted df without categorical attributes
+    return df.reset_index(drop=True).drop(columns=['lists_cat', 'storypoints_cat'])
+
+
+def get_product_board_stats(return_type: ReturnType = ReturnType.JSON, include_nas: bool = True):
     board_json = get_board()
 
     # get ids of relevant trello lists
@@ -36,6 +60,52 @@ def get_product_board_stats():
     result = cards_selected.groupby(['idList', 'storypoints'], dropna=False).count().reset_index()
     # rename columns
     result.columns = ['list', 'storypoints', 'count']
-    return result.to_json()
+
+    if not include_nas:
+        result.dropna(axis=0, inplace=True)
+
+    result = sort_by_list_and_storypoints(result)
+    if return_type == ReturnType.CSV:
+        return return_df_as_csv(result)
+    else:
+        if return_type == ReturnType.JSON:
+            return return_df_as_json(result)
+    return result
+
+
+def aggregate_board_stats(df: pd.DataFrame):
+    # translate storypoints to numeric
+    df['storypoints_numeric'] = [STORYPOINTS_NUMERIC.get(s) for s in df.storypoints]
+    # aggregate by whether list belongs to done (list is implicitly assumed as ongoing otherwise)
+    aggregate = df.groupby(df.list.isin(DONE_LISTS)).storypoints_numeric.sum().reset_index()
+    # renamings for readability
+    aggregate.rename(columns={'list': 'status', 'storypoints_numeric': 'sum'}, inplace=True)
+    aggregate.replace({'status': {True: 'done', False: 'in progress'}}, inplace=True)
+    aggregate['sum'] = aggregate['sum'].astype(int)
+    return aggregate
+
+
+def get_aggregated_board_stats(return_type: ReturnType = ReturnType.HTML):
+    board_df = get_product_board_stats(return_type=ReturnType.DATAFRAME)
+    aggregated_df = aggregate_board_stats(board_df)
+    if return_type == ReturnType.CSV:
+        return return_df_as_csv(aggregated_df)
+    return return_df_as_html(aggregated_df)
+
+
+def return_df_as_csv(df: pd.DataFrame):
     # convert to csv, na values will be represented as None
-    return result.to_csv(na_rep='None', index=False)
+    return df.to_csv(na_rep='None', index=False)
+
+
+def return_df_as_html(df: pd.DataFrame):
+    html_builder = '<style>'\
+                   'table {text-align: right;}'\
+                   'table thead th {text-align: right;}'\
+                   '</style>'
+    html_builder += df.to_html(header=False, index=False).replace('border="1"', 'border="0.2"')
+    return html_builder
+
+
+def return_df_as_json(df: pd.DataFrame):
+    return df.to_json()

@@ -1,8 +1,9 @@
-ongoing_lists = ['Sprint-Backlog',
+ONGOING_LISTS = ['Sprint-Backlog',
                  'Doing',
                  'Code Review',
                  'Functional & Design Testing']
-done_lists = ['Done']
-relevant_lists = ongoing_lists + done_lists
+DONE_LISTS = ['Done']
+RELEVANT_TRELLO_LISTS = ONGOING_LISTS + DONE_LISTS
 
-
+STORYPOINTS_NUMERIC = {'XS': 1, 'S': 2, 'M': 3, 'L': 5, 'XL': 8}
+STORYPOINTS_ORDERED = ['XS', 'S', 'M', 'L', 'XL']
