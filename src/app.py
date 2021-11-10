@@ -25,7 +25,7 @@ def advanced():
 
 
 @app.route('/product/detailed/csv', methods=['GET'])
-def advanced():
+def advanced_csv():
     include_nas = request.args.get('include_nas')
     stats = get_product_board_stats(
         return_type=ReturnType.CSV,
@@ -33,16 +33,16 @@ def advanced():
     return stats
 
 
-@app.route('/product/aggregated/csv', methods=['GET'])
-def aggregated():
-    stats = get_aggregated_board_stats(return_type=ReturnType.CSV)
-    return Response(stats, mimetype='text/csv')
-
-
 @app.route('/product/aggregated', methods=['GET'])
-def aggregated_html():
+def aggregated():
     stats = get_aggregated_board_stats(return_type=ReturnType.HTML)
     return Response(stats, mimetype='text/html')
+
+
+@app.route('/product/aggregated/csv', methods=['GET'])
+def aggregated_csv():
+    stats = get_aggregated_board_stats(return_type=ReturnType.CSV)
+    return Response(stats, mimetype='text/csv')
 
 
 if __name__ == '__main__':
