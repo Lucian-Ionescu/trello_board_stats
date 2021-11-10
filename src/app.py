@@ -15,7 +15,7 @@ def check():
     return {'test': 'ok'}
 
 
-@app.route('/product/advanced', methods=['GET'])
+@app.route('/product/detailed', methods=['GET'])
 def advanced():
     include_nas = request.args.get('include_nas')
     stats = get_product_board_stats(
