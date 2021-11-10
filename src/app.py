@@ -34,4 +34,5 @@ def aggregated_html():
 
 if __name__ == '__main__':
     load_dotenv()
-    app.run(host='0.0.0.0', port=10444)
+    # app.run(host='0.0.0.0', port=10444)
+    app.run(threaded=True, port=5000)
