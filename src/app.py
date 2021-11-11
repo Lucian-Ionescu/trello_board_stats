@@ -12,7 +12,7 @@ def index():
 
 @app.route('/check', methods=['GET'])
 def check():
-    return {'test': 'ok'}
+    return {'up': 'ok'}
 
 
 @app.route('/product/detailed', methods=['GET'])
@@ -21,7 +21,7 @@ def advanced():
     stats = get_product_board_stats(
         return_type=ReturnType.HTML,
         include_nas=include_nas == 'true')
-    return stats
+    return Response(stats, mimetype='text/html')
 
 
 @app.route('/product/detailed/csv', methods=['GET'])
@@ -30,7 +30,7 @@ def advanced_csv():
     stats = get_product_board_stats(
         return_type=ReturnType.CSV,
         include_nas=include_nas == 'true')
-    return stats
+    return Response(stats, mimetype='text/csv')
 
 
 @app.route('/product/aggregated', methods=['GET'])
