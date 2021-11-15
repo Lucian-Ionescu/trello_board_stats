@@ -26,7 +26,7 @@ def sort_by_list_and_storypoints(df: pd.DataFrame,
     return df.reset_index(drop=True).drop(columns=['lists_cat', 'storypoints_cat'])
 
 
-def get_product_board_stats(return_type: ReturnType = ReturnType.JSON, include_nas: bool = True):
+def get_product_board_stats(return_type: ReturnType = ReturnType.JSON, include_custom_sizes: bool = True):
     board_json = get_board()
 
     # get ids of relevant trello lists
@@ -51,7 +51,7 @@ def get_product_board_stats(return_type: ReturnType = ReturnType.JSON, include_n
             for customField in customFields
             if customField['idCustomField'] == storypoints_custom_field_id]
            for customFields in cards_selected.customFieldItems]
-    # carve out storypoints, use None if not given
+    # extract storypoints, use None if field does not exist
     cards_selected['storypoints'] = [a[0] if len(a) > 0 else None for a in aux]
 
     # drop custom field column
@@ -61,7 +61,7 @@ def get_product_board_stats(return_type: ReturnType = ReturnType.JSON, include_n
     # rename columns
     result.columns = ['list', 'storypoints', 'count']
 
-    if not include_nas:
+    if not include_custom_sizes:
         result.dropna(axis=0, inplace=True)
 
     result = sort_by_list_and_storypoints(result)
@@ -105,9 +105,9 @@ def return_df_as_csv(df: pd.DataFrame):
 
 
 def return_df_as_html(df: pd.DataFrame):
-    html_builder = '<style>'\
-                   'table {text-align: right;}'\
-                   'table thead th {text-align: right;}'\
+    html_builder = '<style>' \
+                   'table {text-align: right;}' \
+                   'table thead th {text-align: right;}' \
                    '</style>'
     html_builder += df.to_html(header=False, index=False).replace('border="1"', 'border="0.2"')
     return html_builder
