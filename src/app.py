@@ -9,7 +9,6 @@ app = Flask(__name__)
 
 
 @app.route('/', methods=['GET'])
-@auth_required
 def index():
     message_builder = get_index_help_message()
     return Response(message_builder, mimetype='text/html')
