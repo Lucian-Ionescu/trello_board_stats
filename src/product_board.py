@@ -5,7 +5,7 @@ import pandas as pd
 
 from config.board_config import STORYPOINTS_ORDERED, STORYPOINTS_NUMERIC, DONE_LISTS, \
     RELEVANT_TRELLO_LISTS
-from config.trello_api import get_board, get_list_ids, get_storypoints_custom_field_id, get_cards
+from trello_api import get_board, get_list_ids, get_storypoints_custom_field_id, get_cards
 
 ReturnType = Enum('ReturnType', 'JSON CSV DATAFRAME HTML')
 
